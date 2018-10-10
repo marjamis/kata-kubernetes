@@ -1,0 +1,3 @@
+xray:
+  logLevel: debug
+  region: us-west-2

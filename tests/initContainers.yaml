@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: initoutputtest2
+  labels:
+    app: initoutputtest
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  initContainers:
+  - name: init-myservice
+    image: busybox
+    command: ['sh', '-c', 'echo data']
+  - name: ulimitchange
+    image: busybox
+    command: ['sh', '-c', 'ulimit -a && ulimit -c 2 && ulimit -a']
+  - name: ulimitchange2
+    image: busybox
+    command: ['sh', '-c', 'ulimit -a']

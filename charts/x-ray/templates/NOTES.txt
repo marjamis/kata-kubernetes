@@ -1,0 +1,1 @@
+1. The X-Ray daemon is now running on each node using the host networking namespaces.

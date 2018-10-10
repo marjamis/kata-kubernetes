@@ -28,3 +28,14 @@ spec:
         items:
         - key: redis-config
           path: redis.conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  labels:
+    k8s-app: redis
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru

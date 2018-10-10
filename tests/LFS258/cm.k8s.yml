@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shell-demo
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      envFrom:
+        - configMapRef:
+            name: colours
+      env:
+        - name: ilike
+          valueFrom:
+            configMapKeyRef:
+              name: colours
+              key: favourite
+      volumeMounts:
+        - name: car-vol
+          mountPath: /etc/cars
+  volumes:
+    - name: car-vol
+      configMap:
+        name: fast-car
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fast-car
+data:
+  car.make: Ford
+  car.model: Mustang
+  car.trim: Shelby
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: colours
+data:
+  favourite: green

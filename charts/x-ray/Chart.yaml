@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: "2.0"
+description: A Helm chart for Kubernetes to create a DaemonSet for the AWS X-Ray daemon
+name: x-ray
+version: 0.1.0
+maintainers:
+  - name: marjamis
+#    email: marjamis@
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Peace_sign.svg/500px-Peace_sign.svg.png

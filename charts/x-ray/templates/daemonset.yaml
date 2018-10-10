@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "x-ray.fullname" . }}
+  annotation: maintainer:marjamis
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      name: x-ray-daemon
+  template:
+    metadata:
+      labels:
+        app: {{ template "x-ray.fullname" . }}
+        type: monitoring
+        name: x-ray-daemon
+      name: {{ template "x-ray.fullname" . }}
+    spec:
+      hostNetwork: true
+      containers:
+      - name: x-ray-daemon
+        image: {{ .Values.image.image | quote }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+        ports:
+        - containerPort: 2000
+          name: x-ray-port
+          protocol: UDP
+        env:
+          {{- if .Values.xray.logLevel }}
+          - name: AWS_XRAY_DEBUG_MODE
+            value: {{ .Values.xray.logLevel | quote }}
+          {{- end }}
+          {{- if .Values.xray.region }}
+          - name: AWS_REGION
+            value: {{ .Values.xray.region | quote }}
+          {{- end }}
+        livenessProbe:
+          exec:
+            command:
+            - nc
+            - "-zuv"
+            - localhost
+            - "2000"
+          initialDelaySeconds: 10
+          periodSeconds: 5
+  updateStrategy:
+    type: OnDelete
