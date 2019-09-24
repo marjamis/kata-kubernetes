@@ -8,13 +8,13 @@ all: configure setup install
 configure: configure_storage_classes
 
 configure_storage_classes:
-	kubectl apply -f ./storage-classes.k8s.yml
+	kubectl apply -f ./misc/storage-classes.k8s.yml
 
 
-install: install_dashboard install_prometheus install_grafana install_heapster install_x-ray install_ingress install_misc
+install: install_dashboard install_prometheus install_grafana install_metricsserver install_x-ray install_misc
 
 install_dashboard:
-	kubectl apply -n kube-system -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+	kubectl apply -n kube-system -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
 	kubectl apply -n kube-system -f ./rbacconfigs/dashboard.rbac.yml
 	read -p "Get the secret for the dashboard..."
 	kubectl -n kube-system describe secret/$$(kubectl -n kube-system get secret --output=custom-columns=NAME:.metadata.name | grep --color=never eks-admin)
@@ -22,23 +22,28 @@ install_dashboard:
 
 install_prometheus:
 	## https://github.com/kubernetes/charts/tree/master/stable/prometheus
-	## TODO * configure alert manager to my slack channel WITHOUT putting creds into any config/makefile/ such as with a read in the makefile and passing that one in with --set
 	## TODO * add custom alerts to my cluster_baseline for prom
-	helm install stable/prometheus -n prometheus --namespace kube-system -f ./chartconfigs/prometheus.chartconfig.yml
+	helm install stable/prometheus -n prometheus --namespace kube-system -f ./configs/chartconfigs/prometheus.chartconfig.yml
+	kubectl apply -f ./configs/alertmanager.yml
 
 install_grafana:
 	## https://github.com/kubernetes/charts/tree/master/stable/grafana
-	helm install stable/grafana -n grafana --namespace kube-system -f ./chartconfigs/grafana.chartconfig.yml
+	helm install stable/grafana -n grafana --namespace kube-system -f ./configs/chartconfigs/grafana.chartconfig.yml
+	kubectl apply -f ./configs/grafana_dashboards
 
 install_heapster:
 	# For HPA(Horizontal Pod Autoscaler) but fix this to the new system TODO
-	kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
 	# Database to be used by heapster
-	kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
-	kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml
+
+install_metricsserver:
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/resource-reader.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/metrics-server-service.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/metrics-server-deployment.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/metrics-apiservice.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/auth-reader.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/auth-delegator.yaml -f https://raw.githubusercontent.com/kubernetes-incubator/metrics-server/master/deploy/1.8%2B/aggregated-metrics-reader.yaml
 
 install_x-ray:
-	helm install ../charts/x-ray -n x-ray --namespace x-ray --set image.image=$(shell read -p "Enter the image to be used for the daemon: " image && echo $$image) -f ./chartconfigs/x-ray.chartconfig.yml
+	helm install ../charts/x-ray -n x-ray --namespace x-ray --set image.image=$(shell read -p "Enter the image to be used for the daemon: " image && echo $$image) -f ./configs/chartconfigs/x-ray.chartconfig.yml
+
+install_loki:
+	# https://github.com/grafana/loki/tree/master/production/helm
 
 install_ingress-nginx:
 	# This will install a layer 4 ingress controller. Layer 7 is also possible with a different set of configurations.
@@ -53,8 +58,8 @@ install_ingress-nginx:
 # 	helm registry install quay.io/coreos/alb-ingress-controller-helm
 
 install_misc:
-	kubectl apply -f ./cni_metrics.k8s.yml
-	kubectl apply -f ./externaldns.k8s.yml
+	kubectl apply -f ./misc/cni_metrics.k8s.yml
+	kubectl apply -f ./misc/externaldns.k8s.yml
 
 
 setup: setup_helm

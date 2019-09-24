@@ -1,0 +1,24 @@
+alertmanager:
+  enabled: true
+  configMapOverrideName: alertmanager
+
+pushgateway:
+  enabled: false
+
+serverFiles:
+  alerts:
+    groups:
+      - name: HostDown
+        rules:
+          - alert: HostDown
+            expr: count(up) == 0
+            for: 1m
+            annotations:
+              summary: test
+      - name: HostUp
+        rules:
+          - alert: HostUp
+            expr: count(up) >= 1
+            for: 1m
+            annotations:
+              summary: test
