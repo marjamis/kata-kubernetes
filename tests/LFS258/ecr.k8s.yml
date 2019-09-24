@@ -51,7 +51,16 @@ kind: Service
 apiVersion: v1
 metadata:
   name: externalservice
-  #namespace: prod can use the same spec but different namespace to point at different things? test
+  namespace: default
 spec:
   type: ExternalName
   externalName: google.com
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: externalservice
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: amazon.com
