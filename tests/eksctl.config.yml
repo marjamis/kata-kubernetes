@@ -12,13 +12,13 @@ metadata:
 vpc:
   subnets:
     public:
-      subnet1: {id: subnet-584a8b03}
-      subnet2: {id: subnet-846f71e6}
-      subnet3: {id: subnet-e39ca297}
+      subnet1: {id: {ID}}
+      subnet2: {id: {ID}}
+      subnet3: {id: {ID}}
     private:
-      subnet1: {id: subnet-584a8b03}
-      subnet2: {id: subnet-846f71e6}
-      subnet3: {id: subnet-e39ca297}
+      subnet1: {id: {ID}}
+      subnet2: {id: {ID}}
+      subnet3: {id: {ID}}
 
 nodeGroups:
   - name: general-SSHed-Public
