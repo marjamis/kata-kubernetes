@@ -1,0 +1,48 @@
+apiVersion: eksctl.io/v1alpha4
+kind: ClusterConfig
+
+#  eksctl create iamidentitymapping --name  my-cluster-1 --role arn:aws:iam::123456:role/testing --group system:masters --username admin
+# https://eksctl.io/usage/schema/#
+
+metadata:
+  name: general
+  region: us-west-2
+  version: '1.12'
+
+vpc:
+  subnets:
+    public:
+      subnet1: {id: subnet-584a8b03}
+      subnet2: {id: subnet-846f71e6}
+      subnet3: {id: subnet-e39ca297}
+    private:
+      subnet1: {id: subnet-584a8b03}
+      subnet2: {id: subnet-846f71e6}
+      subnet3: {id: subnet-e39ca297}
+
+nodeGroups:
+  - name: general-SSHed-Public
+    labels: {role: workers}
+    instanceType: m5.xlarge
+    desiredCapacity: 3
+    allowSSH: true
+    # privateNetworking: false
+    sshPublicKeyPath: "testing"
+    tags:
+      "auto-stop": "never"
+      "auto-delete": "never"
+  - name: general-SSHed-Personal
+    labels: {role: workers}
+    instanceType: m5.xlarge
+    desiredCapacity: 1
+    allowSSH: true
+    ami: ami-01ae94f2c8800f512
+    # privateNetworking: false
+    sshPublicKeyPath: "testing"
+    tags:
+      "auto-stop": "never"
+      "auto-delete": "never"
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
