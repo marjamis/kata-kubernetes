@@ -1,0 +1,117 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: test
+  name: test
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+          ports:
+          - containerPort: 80
+            protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: test
+  name: test
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+  selector:
+    app: test
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: gen.k8s.marjamis.<domain>.com
+    http:
+      paths:
+      - backend:
+          serviceName: test
+          servicePort: 80
+        path: /random
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: nginxingresstest
+  name: nginxingresstest
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginxingresstest
+  template:
+    metadata:
+      labels:
+        app: nginxingresstest
+    spec:
+      containers:
+        - image: httpd
+          name: httpd
+          ports:
+          - containerPort: 80
+            protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginxingresstest
+  name: nginxingresstest
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+  selector:
+    app: nginxingresstest
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginxingresstest
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: ingresstest.k8s.marjamis.<domain>.com
+    http:
+      paths:
+      - backend:
+          serviceName: nginxingresstest
+          servicePort: 80
+        path: /
