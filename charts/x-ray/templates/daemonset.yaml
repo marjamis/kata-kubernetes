@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ template "x-ray.fullname" . }}
-  annotation: maintainer:marjamis
+  annotations:
+    maintainer: marjamis
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
