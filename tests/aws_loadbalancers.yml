@@ -17,9 +17,10 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx
+        image: nginx:alpine
         ports:
         - containerPort: 80
+          name: http
         livenessProbe:
           httpGet:
             path: /
@@ -27,42 +28,22 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 3
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment2
-  namespace: testing
-  labels:
-    app: nginx2
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx2
-  template:
-    metadata:
-      labels:
-        app: nginx2
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
----
 kind: Service
 apiVersion: v1
 metadata:
   name: elb-nginx
   namespace: testing
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert:  {ACM_CERTIFICATE}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
 spec:
   selector:
     app: nginx
   ports:
   - protocol: TCP
-    port: 80
-  # Annotations/Subnet Tagging to restrict which subnets to use for this.
-  # Add details
+    port: 443
+    name: https
+    targetPort: 80
   type: LoadBalancer
 ---
 kind: Service
@@ -87,7 +68,7 @@ apiVersion: v1
 metadata:
   name: nlb-nginx
   namespace: testing
-  # List of the availabel annotations: https://github.com/kubernetes/kubernetes/blob/master/pkg/cloudprovider/providers/aws/aws.go#L72
+  # List of the available annotations: https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
@@ -99,34 +80,3 @@ spec:
   # Annotations/Subnet Tagging to restrict which subnets to use for this.
   # TODO Add details
   type: LoadBalancer
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: alb-ingress-nginx
-  namespace: testing
-  # TODO Link to all the possible annotations
-  annotations:
-    kubernetes.io/ingress.class: alb
-  labels:
-    app: nginx
-spec:
-  rules:
-  - host: nginx.example.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: "nginx"
-          servicePort: 80
-      - path: /testing
-        backend:
-          serviceName: "nginx2"
-          servicePort: 80
-  - host: nginx2.example.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: "nginx2"
-          servicePort: 80

@@ -12,6 +12,7 @@ spec:
   - name: init-myservice
     image: busybox
     command: ['sh', '-c', 'echo data']
+  # Note: this won't actually work just more a test to show the separate namespaces at play
   - name: ulimitchange
     image: busybox
     command: ['sh', '-c', 'ulimit -a && ulimit -c 2 && ulimit -a']
