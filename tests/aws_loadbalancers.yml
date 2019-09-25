@@ -78,5 +78,4 @@ spec:
   - protocol: TCP
     port: 80
   # Annotations/Subnet Tagging to restrict which subnets to use for this.
-  # TODO Add details
   type: LoadBalancer

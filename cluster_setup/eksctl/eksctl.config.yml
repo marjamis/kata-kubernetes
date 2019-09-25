@@ -1,0 +1,74 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: general-1dot14
+  region: us-west-2
+  version: '1.14'
+  tags:
+    env: testing
+
+vpc:
+  subnets:
+    public:
+      subnet1: {id: {ID}}
+      subnet2: {id: {ID}}
+      subnet3: {id: {ID}}
+    private:
+      subnet1: {id: {ID}}
+      subnet2: {id: {ID}}
+      subnet3: {id: {ID}}
+
+nodeGroups:
+  - name: general-1dot14-a
+    labels: {role: workers}
+    instanceType: m5.xlarge
+    desiredCapacity: 1
+    kubeletExtraConfig:
+      kubeReserved:
+          cpu: "300m"
+          memory: "300Mi"
+          ephemeral-storage: "1Gi"
+      kubeReservedCgroup: "/kube-reserved"
+      systemReserved:
+          cpu: "300m"
+          memory: "300Mi"
+          ephemeral-storage: "1Gi"
+      evictionHard:
+          memory.available:  "200Mi"
+          nodefs.available: "10%"
+    ssh:
+      allow: true
+      publicKeyPath: testing
+    privateNetworking: false
+    tags:
+      "auto-stop": "never"
+      "auto-delete": "never"
+  - name: general-1dot14-b
+    labels: {role: workers}
+    instanceType: m5.xlarge
+    desiredCapacity: 1
+    kubeletExtraConfig:
+      kubeReserved:
+          cpu: "300m"
+          memory: "300Mi"
+          ephemeral-storage: "1Gi"
+      kubeReservedCgroup: "/kube-reserved"
+      systemReserved:
+          cpu: "300m"
+          memory: "300Mi"
+          ephemeral-storage: "1Gi"
+      evictionHard:
+          memory.available:  "200Mi"
+          nodefs.available: "10%"
+    ssh:
+      allow: true
+      publicKeyPath: testing
+    ami: ami-038a987c6425a84ad
+    tags:
+      "auto-stop": "never"
+      "auto-delete": "never"
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]

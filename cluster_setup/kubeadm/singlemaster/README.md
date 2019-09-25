@@ -1,4 +1,4 @@
-# Single Master kubeadm setup TODO
+# kubeadm - single master
 
 **Note:** This is largely to replicate EKS but not necessarily for 1:1, such as changes where I just want to.
 

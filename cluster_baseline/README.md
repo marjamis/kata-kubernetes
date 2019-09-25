@@ -12,3 +12,5 @@ To deploy everything you can run:
 ```bash
 make all
 ```
+
+**Note:** Some steps maybe rough duplicates of functionality built into cluster creators/providers, such as the AWS EKS, and therefore are probably better served being configured via that mechanism but will remain here for testing implementations.
