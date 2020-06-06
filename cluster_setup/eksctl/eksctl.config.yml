@@ -4,28 +4,42 @@ kind: ClusterConfig
 metadata:
   name: cluster
   region: us-west-2
-  version: '1.14'
+  version: '1.16'
   tags:
     env: testing
 
+availabilityZones:
+  - us-west-2a
+  - us-west-2b
+  - us-west-2c
 vpc:
-  subnets:
-    public:
-      AZ-a: {id: {subnetID}}
-      AZ-b: {id: {subnetID}}
-      AZ-c: {id: {subnetID}}
-    private:
-      AZ-a: {id: {subnetID}}
-      AZ-b: {id: {subnetID}}
-      AZ-c: {id: {subnetID}}
-  # nat:
-  #   gateway: HighlyAvailable
-  # clusterEndpoints:
-  #   privateAccess: true
-  #   publieAccess: false
+  nat:
+    gateway: HighlyAvailable
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+#   subnets:
+#     public:
+#       AZ-a: {id: subnet-XXX}
+#       AZ-b: {id: subnet-XXX}
+#       AZ-c: {id: subnet-XXX}
+#     private:
+#       AZ-a: {id: subnet-XXX}
+#       AZ-b: {id: subnet-XXX}
+#       AZ-c: {id: subnet-XXX}
+
+fargateProfiles:
+  - name: default
+    selectors:
+      - namespace: fargate
+  - name: dev
+    selectors:
+      - namespace: dev
+        labels:
+          env: dev
 
 nodeGroups:
-  - name: nodeGroupA
+  - name: default
     labels: {role: workers}
     instanceType: m5.xlarge
     desiredCapacity: 1
@@ -46,10 +60,11 @@ nodeGroups:
       allow: true
       publicKeyPath: testing
     privateNetworking: false
+    ami: ami-0d038c77c015e1353
     tags:
       "auto-stop": "never"
       "auto-delete": "never"
-  - name: nodeGroupB
+  - name: secondaryNodeGroup
     labels: {role: workers}
     instanceType: m5.xlarge
     desiredCapacity: 1
@@ -69,7 +84,7 @@ nodeGroups:
     ssh:
       allow: true
       publicKeyPath: testing
-    ami: ami-038a987c6425a84ad
+    ami: ami-0d038c77c015e1353
     tags:
       "auto-stop": "never"
       "auto-delete": "never"
@@ -77,3 +92,13 @@ nodeGroups:
 cloudWatch:
   clusterLogging:
     enableTypes: ["*"]
+
+git:
+  repo:
+    url: "git@github.com:marjamis/k8s_manifests.git"
+    branch: master
+    fluxPath: "cluster_baseline/flux/"
+    email: "exclusive.cipher@gmail.com"
+  operator:
+    namespace: "flux"
+    withHelm: true

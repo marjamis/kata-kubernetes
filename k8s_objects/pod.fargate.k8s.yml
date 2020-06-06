@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  namespace: fargate
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: {AcctId}.dkr.ecr.us-west-2.amazonaws.com/test:debugger
