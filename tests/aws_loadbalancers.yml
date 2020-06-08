@@ -1,3 +1,6 @@
+---
+# List of the available annotations: https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/legacy-cloud-providers/aws/aws.go
+# Annotations/Subnet Tagging to restrict which subnets to use for this.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,17 +28,23 @@ spec:
           httpGet:
             path: /
             port: 80
-          initialDelaySeconds: 3
-          periodSeconds: 3
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: elb-nginx
+  name: elb
   namespace: testing
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert:  {ACM_CERTIFICATE}
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert:  {ACM_CERTIFICATE}
+    # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
 spec:
   selector:
     app: nginx
@@ -49,7 +58,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: elb-internal-nginx
+  name: elb-internal
   namespace: testing
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: "0.0.0.0/0"
@@ -59,23 +68,30 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-  # Annotations/Subnet Tagging to restrict which subnets to use for this.
-  # Add details
   type: LoadBalancer
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: nlb-nginx
+  name: nlb
   namespace: testing
-  # List of the available annotations: https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "3"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "20"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
 spec:
   selector:
     app: nginx
   ports:
+  - port: 443
+    targetPort: 80
+    protocol: TCP
+    name: https
   - protocol: TCP
     port: 80
-  # Annotations/Subnet Tagging to restrict which subnets to use for this.
+    targetPort: 80
+    name: http
   type: LoadBalancer

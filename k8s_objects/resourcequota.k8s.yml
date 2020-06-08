@@ -5,5 +5,4 @@ metadata:
 spec:
   hard:
     persistentvolumeclaims: 5
-    requests.storage: 100Mi
-      
+    requests.storage: 1000Mi

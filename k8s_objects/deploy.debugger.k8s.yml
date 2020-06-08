@@ -15,8 +15,16 @@ spec:
       labels:
         app: debugger
     spec:
+      # nodeSelector:
+      #   system: secondOne
       containers:
       - name: debugger
         image: "{AcctId}.dkr.ecr.us-west-2.amazonaws.com/test:debugger"
         ports:
         - containerPort: 80
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30

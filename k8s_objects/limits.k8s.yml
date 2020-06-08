@@ -7,9 +7,9 @@ spec:
     - default:
         memory: 512Mi
       defaultRequest:
-        memory: 256Mi
+        memory: 128Mi
       max:
         cpu: "400m"
       min:
-        cpu: "200m"
+        cpu: "20m"
       type: Container

@@ -14,7 +14,7 @@ spec:
     command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
     resources:
       limits:
-        cpu: 10m
+        cpu: 200m
         memory: 20Mi
   # initContainers:
   # - name: init-myservice
