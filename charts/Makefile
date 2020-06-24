@@ -1,7 +1,12 @@
 default:
 
+index:
+	helm repo index . --url https://marjamis.github.io/k8s_manifests/charts/
+
 package:
-	helm package $(create) && helm repo index .
+	helm package $(create) 
+	$(MAKE) index
 
 packages:
-	for i in $(shell ls -d ./*/); do helm package $$i; done && helm repo index .
+	for i in $(shell ls -d ./*/); do helm package $$i; done 
+	$(MAKE) index

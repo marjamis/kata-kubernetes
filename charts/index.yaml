@@ -3,15 +3,15 @@ entries:
   x-ray:
   - apiVersion: v1
     appVersion: "2.0"
-    created: "2020-06-24T21:24:55.199331228+10:00"
+    created: "2020-06-24T21:44:15.965712008+10:00"
     description: A Helm chart for Kubernetes to create a DaemonSet for the AWS X-Ray
       daemon
-    digest: 2beeb18981973f2e38a8c075fcf881dc64d6f4175cf732d16828ce849486d59e
+    digest: fd57b886763babd628019c16a731ee8ed8d3d0e5cf670302b5d01a706d7e3b99
     icon: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Peace_sign.svg/500px-Peace_sign.svg.png
     maintainers:
     - name: marjamis
     name: x-ray
     urls:
-    - x-ray-0.1.0.tgz
+    - https://marjamis.github.io/k8s_manifests/charts/x-ray-0.1.0.tgz
     version: 0.1.0
-generated: "2020-06-24T21:24:55.198987899+10:00"
+generated: "2020-06-24T21:44:15.965312788+10:00"
