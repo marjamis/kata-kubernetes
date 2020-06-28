@@ -1,0 +1,21 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: nginx-ingress2
+  namespace: testing
+  annotations:
+    fluxcd.io/ignore: "false"
+spec:
+  releaseName: nginx-ingress2
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: nginx-ingress2
+    version: 1.25.0
+  values:
+    controller:
+      ingressClass: nginx-ingress2
+      service:
+        type: LoadBalancer
+      metrics:
+        enabled: false
