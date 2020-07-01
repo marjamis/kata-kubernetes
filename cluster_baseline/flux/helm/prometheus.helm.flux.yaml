@@ -11,7 +11,7 @@ spec:
   chart:
     repository: stable/prometheus
     name: prometheus
-    version: 9.0
+    version: 11.6.0
   values:
     alertmanager:
       enabled: true
