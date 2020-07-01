@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-kubernetes-cluster-status
+  name: grafana-dashboard-kubernetes-resource-request
   labels:
     grafana-dashboard: "1"
 data:

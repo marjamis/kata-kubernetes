@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-kubernetes-resource-request
+  name: grafana-dashboard-kubernetes-control-plane-status
   labels:
     grafana-dashboard: "1"
 data:
