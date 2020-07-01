@@ -1,18 +1,19 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-kubernetes-capacity-planning
+  name: grafana-dashboard-nodes
   labels:
     grafana-dashboard: "1"
 data:
-  kubernetes-capacity-planning.json: |-
+  nodes.json: |-
     {
       "__inputs": [
         {
           "description": "",
           "label": "Prometheus",
           "name": "Prometheus",
-          "pluginId": "Prometheus",
+          "pluginId": "prometheus",
           "pluginName": "Prometheus",
           "type": "datasource"
         }
@@ -20,6 +21,7 @@ data:
       "annotations": {
         "list": []
       },
+      "description": "Dashboard to get an overview of one server",
       "editable": true,
       "gnetId": 22,
       "graphTooltip": 0,
@@ -74,10 +76,10 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(rate(node_cpu{mode=\"idle\"}[2m])) * 100",
+                  "expr": "100 - (avg by (cpu) (irate(node_cpu{mode=\"idle\", instance=\"$server\"}[5m])) * 100)",
                   "hide": false,
                   "intervalFactor": 10,
-                  "legendFormat": "",
+                  "legendFormat": "{{cpu}}",
                   "refId": "A",
                   "step": 50
                 }
@@ -100,6 +102,7 @@ data:
                   "format": "percent",
                   "label": "cpu usage",
                   "logBase": 1,
+                  "max": 100,
                   "min": 0,
                   "show": true
                 },
@@ -152,7 +155,7 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(node_load1)",
+                  "expr": "node_load1{instance=\"$server\"}",
                   "intervalFactor": 4,
                   "legendFormat": "load 1m",
                   "refId": "A",
@@ -160,7 +163,7 @@ data:
                   "target": ""
                 },
                 {
-                  "expr": "sum(node_load5)",
+                  "expr": "node_load5{instance=\"$server\"}",
                   "intervalFactor": 4,
                   "legendFormat": "load 5m",
                   "refId": "B",
@@ -168,7 +171,7 @@ data:
                   "target": ""
                 },
                 {
-                  "expr": "sum(node_load15)",
+                  "expr": "node_load15{instance=\"$server\"}",
                   "intervalFactor": 4,
                   "legendFormat": "load 15m",
                   "refId": "C",
@@ -259,43 +262,39 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)",
+                  "expr": "node_memory_MemTotal{instance=\"$server\"} - node_memory_MemFree{instance=\"$server\"} - node_memory_Buffers{instance=\"$server\"} - node_memory_Cached{instance=\"$server\"}",
+                  "hide": false,
+                  "interval": "",
                   "intervalFactor": 2,
-                  "legendFormat": "memory usage",
-                  "metric": "memo",
-                  "refId": "A",
-                  "step": 10,
-                  "target": ""
+                  "legendFormat": "memory used",
+                  "metric": "",
+                  "refId": "C",
+                  "step": 10
                 },
                 {
-                  "expr": "sum(node_memory_Buffers)",
+                  "expr": "node_memory_Buffers{instance=\"$server\"}",
                   "interval": "",
                   "intervalFactor": 2,
                   "legendFormat": "memory buffers",
-                  "metric": "memo",
-                  "refId": "B",
-                  "step": 10,
-                  "target": ""
+                  "metric": "",
+                  "refId": "E",
+                  "step": 10
                 },
                 {
-                  "expr": "sum(node_memory_Cached)",
-                  "interval": "",
+                  "expr": "node_memory_Cached{instance=\"$server\"}",
                   "intervalFactor": 2,
                   "legendFormat": "memory cached",
-                  "metric": "memo",
-                  "refId": "C",
-                  "step": 10,
-                  "target": ""
+                  "metric": "",
+                  "refId": "F",
+                  "step": 10
                 },
                 {
-                  "expr": "sum(node_memory_MemFree)",
-                  "interval": "",
+                  "expr": "node_memory_MemFree{instance=\"$server\"}",
                   "intervalFactor": 2,
                   "legendFormat": "memory free",
-                  "metric": "memo",
+                  "metric": "",
                   "refId": "D",
-                  "step": 10,
-                  "target": ""
+                  "step": 10
                 }
               ],
               "title": "Memory Usage",
@@ -379,9 +378,8 @@ data:
               },
               "targets": [
                 {
-                  "expr": "((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100",
+                  "expr": "((node_memory_MemTotal{instance=\"$server\"} - node_memory_MemFree{instance=\"$server\"}  - node_memory_Buffers{instance=\"$server\"} - node_memory_Cached{instance=\"$server\"}) / node_memory_MemTotal{instance=\"$server\"}) * 100",
                   "intervalFactor": 2,
-                  "metric": "",
                   "refId": "A",
                   "step": 60,
                   "target": ""
@@ -409,7 +407,7 @@ data:
         {
           "collapse": false,
           "editable": true,
-          "height": "246px",
+          "height": "250px",
           "panels": [
             {
               "aliasColors": {},
@@ -425,7 +423,7 @@ data:
                 "threshold2Color": "rgba(234, 112, 112, 0.22)"
               },
               "id": 6,
-              "isNew": false,
+              "isNew": true,
               "legend": {
                 "alignAsTable": false,
                 "avg": false,
@@ -466,7 +464,7 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(rate(node_disk_bytes_read[5m]))",
+                  "expr": "sum by (instance) (rate(node_disk_bytes_read{instance=\"$server\"}[2m]))",
                   "hide": false,
                   "intervalFactor": 4,
                   "legendFormat": "read",
@@ -475,14 +473,14 @@ data:
                   "target": ""
                 },
                 {
-                  "expr": "sum(rate(node_disk_bytes_written[5m]))",
+                  "expr": "sum by (instance) (rate(node_disk_bytes_written{instance=\"$server\"}[2m]))",
                   "intervalFactor": 4,
                   "legendFormat": "written",
                   "refId": "B",
                   "step": 20
                 },
                 {
-                  "expr": "sum(rate(node_disk_io_time_ms[5m]))",
+                  "expr": "sum by (instance) (rate(node_disk_io_time_ms{instance=\"$server\"}[2m]))",
                   "intervalFactor": 4,
                   "legendFormat": "io time",
                   "refId": "C",
@@ -534,7 +532,7 @@ data:
                 "thresholdMarkers": true
               },
               "hideTimeOverride": false,
-              "id": 12,
+              "id": 7,
               "links": [],
               "mappingType": 1,
               "mappingTypes": [
@@ -569,7 +567,7 @@ data:
               },
               "targets": [
                 {
-                  "expr": "(sum(node_filesystem_size{device!=\"rootfs\"}) - sum(node_filesystem_free{device!=\"rootfs\"})) / sum(node_filesystem_size{device!=\"rootfs\"})",
+                  "expr": "(sum(node_filesystem_size{device!=\"rootfs\",instance=\"$server\"}) - sum(node_filesystem_free{device!=\"rootfs\",instance=\"$server\"})) / sum(node_filesystem_size{device!=\"rootfs\",instance=\"$server\"})",
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60,
@@ -647,10 +645,10 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(rate(node_network_receive_bytes{device!~\"lo\"}[5m]))",
+                  "expr": "rate(node_network_receive_bytes{instance=\"$server\",device!~\"lo\"}[5m])",
                   "hide": false,
                   "intervalFactor": 2,
-                  "legendFormat": "",
+                  "legendFormat": "{{device}}",
                   "refId": "A",
                   "step": 10,
                   "target": ""
@@ -729,10 +727,10 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "sum(rate(node_network_transmit_bytes{device!~\"lo\"}[5m]))",
+                  "expr": "rate(node_network_transmit_bytes{instance=\"$server\",device!~\"lo\"}[5m])",
                   "hide": false,
                   "intervalFactor": 2,
-                  "legendFormat": "",
+                  "legendFormat": "{{device}}",
                   "refId": "B",
                   "step": 10,
                   "target": ""
@@ -768,176 +766,6 @@ data:
           "showTitle": false,
           "title": "New Row",
           "titleSize": "h6"
-        },
-        {
-          "collapse": false,
-          "editable": true,
-          "height": "276px",
-          "panels": [
-            {
-              "aliasColors": {},
-              "bars": false,
-              "dashes": false,
-              "datasource": "Prometheus",
-              "editable": true,
-              "error": false,
-              "fill": 1,
-              "grid": {
-                "threshold1Color": "rgba(216, 200, 27, 0.27)",
-                "threshold2Color": "rgba(234, 112, 112, 0.22)"
-              },
-              "id": 11,
-              "isNew": true,
-              "legend": {
-                "alignAsTable": false,
-                "avg": false,
-                "current": false,
-                "hideEmpty": false,
-                "hideZero": false,
-                "max": false,
-                "min": false,
-                "rightSide": false,
-                "show": true,
-                "total": false
-              },
-              "lines": true,
-              "linewidth": 2,
-              "links": [],
-              "nullPointMode": "connected",
-              "percentage": false,
-              "pointradius": 5,
-              "points": false,
-              "renderer": "flot",
-              "seriesOverrides": [],
-              "spaceLength": 11,
-              "span": 9,
-              "stack": false,
-              "steppedLine": false,
-              "targets": [
-                {
-                  "expr": "sum(kube_pod_info)",
-                  "format": "time_series",
-                  "intervalFactor": 2,
-                  "legendFormat": "Current number of Pods",
-                  "refId": "A",
-                  "step": 10
-                },
-                {
-                  "expr": "sum(kube_node_status_capacity_pods)",
-                  "format": "time_series",
-                  "intervalFactor": 2,
-                  "legendFormat": "Maximum capacity of pods",
-                  "refId": "B",
-                  "step": 10
-                }
-              ],
-              "title": "Cluster Pod Utilization",
-              "tooltip": {
-                "msResolution": false,
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-              },
-              "type": "graph",
-              "xaxis": {
-                "mode": "time",
-                "show": true,
-                "values": []
-              },
-              "yaxes": [
-                {
-                  "format": "short",
-                  "logBase": 1,
-                  "show": true
-                },
-                {
-                  "format": "short",
-                  "logBase": 1,
-                  "show": true
-                }
-              ]
-            },
-            {
-              "colorBackground": false,
-              "colorValue": false,
-              "colors": [
-                "rgba(50, 172, 45, 0.97)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(245, 54, 54, 0.9)"
-              ],
-              "datasource": "Prometheus",
-              "editable": true,
-              "format": "percent",
-              "gauge": {
-                "maxValue": 100,
-                "minValue": 0,
-                "show": true,
-                "thresholdLabels": false,
-                "thresholdMarkers": true
-              },
-              "hideTimeOverride": false,
-              "id": 7,
-              "links": [],
-              "mappingType": 1,
-              "mappingTypes": [
-                {
-                  "name": "value to text",
-                  "value": 1
-                },
-                {
-                  "name": "range to text",
-                  "value": 2
-                }
-              ],
-              "maxDataPoints": 100,
-              "nullPointMode": "connected",
-              "postfix": "",
-              "postfixFontSize": "50%",
-              "prefix": "",
-              "prefixFontSize": "50%",
-              "rangeMaps": [
-                {
-                  "from": "null",
-                  "text": "N/A",
-                  "to": "null"
-                }
-              ],
-              "span": 3,
-              "sparkline": {
-                "fillColor": "rgba(31, 118, 189, 0.18)",
-                "full": false,
-                "lineColor": "rgb(31, 120, 193)",
-                "show": false
-              },
-              "targets": [
-                {
-                  "expr": "100 - (sum(kube_node_status_capacity_pods) - sum(kube_pod_info)) / sum(kube_node_status_capacity_pods) * 100",
-                  "format": "time_series",
-                  "intervalFactor": 2,
-                  "legendFormat": "",
-                  "refId": "A",
-                  "step": 60,
-                  "target": ""
-                }
-              ],
-              "thresholds": "80, 90",
-              "title": "Pod Utilization",
-              "transparent": false,
-              "type": "singlestat",
-              "valueFontSize": "80%",
-              "valueMaps": [
-                {
-                  "op": "=",
-                  "text": "N/A",
-                  "value": "null"
-                }
-              ],
-              "valueName": "current"
-            }
-          ],
-          "showTitle": false,
-          "title": "New Row",
-          "titleSize": "h6"
         }
       ],
       "schemaVersion": 14,
@@ -945,7 +773,28 @@ data:
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": null,
+            "current": {},
+            "datasource": "Prometheus",
+            "hide": 0,
+            "includeAll": false,
+            "label": null,
+            "multi": false,
+            "name": "server",
+            "options": [],
+            "query": "label_values(node_boot_time, instance)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          }
+        ]
       },
       "time": {
         "from": "now-1h",
@@ -977,6 +826,6 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "Kubernetes Capacity Planning",
-      "version": 4
+      "title": "Nodes",
+      "version": 2
     }

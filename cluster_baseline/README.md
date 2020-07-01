@@ -6,11 +6,4 @@ A collection of manifests/charts/etc that will create a good starting point for 
 
 This will also be modular for individual use or in-conjunction with each other, where it makes sense.
 
-A [Makefile](./Makefile) is provided with several targets to make deploying all configurations, at once or independently, easier. This has the added benefit of being able to have comments as to what is occurring and why.
-
-To deploy everything you can run:
-```bash
-make all
-```
-
 **Note:** Some steps maybe rough duplicates of functionality built into cluster creators/providers, such as the AWS EKS, and therefore are probably better served being configured via that mechanism but will remain here for testing implementations.

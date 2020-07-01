@@ -1,6 +1,7 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    name: eks-example
-  name: eks-example
+    name: testing
+  name: testing

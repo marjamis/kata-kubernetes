@@ -1,0 +1,18 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: x-ray
+  namespace: kube-system
+  annotations:
+    fluxcd.io/ignore: "false"
+spec:
+  releaseName: x-ray
+  chart:
+    git: https://github.com./marjamis/k8s_manifests
+    ref: master
+    path: charts/x-ray
+  values:
+    xray:
+      logLevel: debug
+      region: us-west-2
