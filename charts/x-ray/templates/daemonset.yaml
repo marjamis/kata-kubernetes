@@ -37,13 +37,6 @@ spec:
           - name: AWS_REGION
             value: {{ .Values.xray.region | quote }}
           {{- end }}
-        livenessProbe:
-          exec:
-            command:
-            - nc
-            - "-zuv"
-            - localhost
-            - "2000"
           initialDelaySeconds: 10
           periodSeconds: 5
   updateStrategy:
