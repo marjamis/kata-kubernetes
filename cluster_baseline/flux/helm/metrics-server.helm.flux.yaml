@@ -9,5 +9,5 @@ metadata:
 spec:
   releaseName: metrics-server
   chart:
-    repository: stable/metrics-server
+    repository: https://kubernetes-charts.storage.googleapis.com/
     name: metrics-server

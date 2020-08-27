@@ -9,7 +9,7 @@ metadata:
 spec:
   releaseName: grafana
   chart:
-    repository: stable/grafana
+    repository: https://kubernetes-charts.storage.googleapis.com/
     name: grafana
     version: 5.0.0
   values:

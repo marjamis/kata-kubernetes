@@ -10,7 +10,7 @@ spec:
   releaseName: nginx-ingress2
   chart:
     repository: https://kubernetes-charts.storage.googleapis.com/
-    name: nginx-ingress2
+    name: nginx-ingress
     version: 1.25.0
   values:
     controller:
