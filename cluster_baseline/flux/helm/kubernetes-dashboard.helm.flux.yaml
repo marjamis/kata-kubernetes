@@ -2,13 +2,13 @@
 apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
-  name: kuberntes-dashboard
+  name: kubernetes-dashboard
   namespace: kube-system
   annotations:
     fluxcd.io/ignore: "false"
 spec:
-  releaseName: kuberntes-dashboard
+  releaseName: kubernetes-dashboard
   chart:
-    repository: https://kubernetes.github.io/dashboard/
+    repository: https://kubernetes-charts.storage.googleapis.com/
     name: kubernetes-dashboard
     version: 2.0.0
