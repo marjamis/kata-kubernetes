@@ -15,7 +15,7 @@ spec:
   values:
     replicas: 1
     deploymentStrategy:
-        RollingUpdate
+        type: RollingUpdate
     dashboardProviders:
      dashboardproviders.yaml:
        apiVersion: 1
