@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-kubernetes-cluster-health
+  namespace: kube-system
   labels:
     grafana-dashboard: "1"
 data:

@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-nodes
+  namespace: kube-system
   labels:
     grafana-dashboard: "1"
 data:
