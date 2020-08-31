@@ -1,0 +1,14 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: efs-csi
+  namespace: kube-system
+  annotations:
+    fluxcd.io/ignore: "false"
+spec:
+  releaseName: efs-csi
+  chart:
+    repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+    name: aws-efs-csi-driver
+    version: 0.1.0
