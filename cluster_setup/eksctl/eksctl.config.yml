@@ -2,31 +2,32 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: cluster
+  name: cluster-18
   region: us-west-2
-  version: '1.16'
+  version: '1.18'
   tags:
-    env: testing
+    'env': 'testing'
+    'auto-delete': 'no'
 
-availabilityZones:
-  - us-west-2a
-  - us-west-2b
-  - us-west-2c
+# availabilityZones:
+#   - us-west-2a
+#   - us-west-2b
+#   - us-west-2c
 vpc:
   nat:
     gateway: HighlyAvailable
   clusterEndpoints:
     privateAccess: true
     publicAccess: true
-#   subnets:
-#     public:
-#       AZ-a: {id: subnet-XXX}
-#       AZ-b: {id: subnet-XXX}
-#       AZ-c: {id: subnet-XXX}
-#     private:
-#       AZ-a: {id: subnet-XXX}
-#       AZ-b: {id: subnet-XXX}
-#       AZ-c: {id: subnet-XXX}
+  subnets:
+    public:
+      AZ-a: {id: subnet-{id}}
+      AZ-b: {id: subnet-{id}}
+      AZ-c: {id: subnet-{id}}
+    private:
+      AZ-a: {id: subnet-{id}}
+      AZ-b: {id: subnet-{id}}
+      AZ-c: {id: subnet-{id}}
 
 fargateProfiles:
   - name: default
@@ -39,7 +40,7 @@ fargateProfiles:
           env: dev
 
 nodeGroups:
-  - name: default
+  - name: new-default
     labels: {role: workers}
     instanceType: m5.xlarge
     desiredCapacity: 1
@@ -60,11 +61,10 @@ nodeGroups:
       allow: true
       publicKeyPath: testing
     privateNetworking: false
-    ami: ami-0d038c77c015e1353
+    ami: ami-04f0f3d381d07e0b6
     tags:
-      "auto-stop": "never"
-      "auto-delete": "never"
-  - name: secondaryNodeGroup
+      "auto-delete": "no"
+  - name: new-secondaryNodeGroup
     labels: {role: workers}
     instanceType: m5.xlarge
     desiredCapacity: 1
@@ -84,10 +84,21 @@ nodeGroups:
     ssh:
       allow: true
       publicKeyPath: testing
-    ami: ami-0d038c77c015e1353
+    ami: ami-04f0f3d381d07e0b6
     tags:
-      "auto-stop": "never"
-      "auto-delete": "never"
+      "auto-delete": "no"
+  - name: bottlerocket
+    instanceType: m5.xlarge
+    desiredCapacity: 1
+    amiFamily: Bottlerocket
+    ami: auto-ssm
+    labels: {role: workers, os_type: bottlerocket}
+    # More details on the new settings can be found here: https://eksctl.io/usage/schema/
+    bottlerocket:
+      enableAdminContainer: true
+      # More details on settings can be found here: https://github.com/bottlerocket-os/bottlerocket/#description-of-settings. Note: eksctl will want some of these in other locations of the nodegroup settings.
+      settings:
+        motd: "Hello, eksctl!"
 
 cloudWatch:
   clusterLogging:
