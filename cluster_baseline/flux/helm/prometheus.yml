@@ -1,17 +1,18 @@
 ---
-apiVersion: helm.fluxcd.io/v1
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: prometheus
-  namespace: kube-system
-  annotations:
-    fluxcd.io/ignore: "false"
 spec:
+  interval: 60m
   releaseName: prometheus
   chart:
-    repository: https://kubernetes-charts.storage.googleapis.com/
-    name: prometheus
-    version: 11.6.0
+    spec:
+      chart: prometheus
+      version:
+      sourceRef:
+        kind: HelmRepository
+        name: 
   values:
     alertmanager:
       enabled: true
@@ -35,3 +36,16 @@ spec:
                 for: 1m
                 annotations:
                   summary: test
+
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Alert
+metadata:
+    name: prometheus
+spec:
+    providerRef:
+        name: slack
+    eventSeverity: info
+    eventSources:
+    - kind: HelmRelease
+      name: prometheus

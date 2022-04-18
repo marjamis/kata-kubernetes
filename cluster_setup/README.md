@@ -7,3 +7,4 @@ Even though there are Makefile's this is meant to be an outline the process of h
 Types of cluster setups:
 * [kubeadm - Single Master](./singlemaster/)
 * [eksctl](./eksctl/)
+* [minikube](./minikube/)
