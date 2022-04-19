@@ -1,8 +1,10 @@
 # flux
 
 ## Install flux
+.
 
 ## Create a personal access token
+
 ## To manually install flux with existing repository and path, as readonly
 
 ```bash
