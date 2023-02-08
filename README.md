@@ -1,4 +1,4 @@
-# k8s_manifests
+# kata-kubernetes 
 A collection of Kubernetes manifests to deploy some samples/basic objects. This also include some custom [charts](./charts) and a ["baseline"](./cluster_baseline) of what I will run on new clusters to simplify any setups.
 
 ## Products to keep in mind
